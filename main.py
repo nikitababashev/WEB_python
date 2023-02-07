@@ -13,6 +13,7 @@ class MyWidget(QMainWindow, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle('Карта')
         self.ready.clicked.connect(self.createmaps)
 
     def createmaps(self):
@@ -26,6 +27,7 @@ class MyWidget(QMainWindow, Ui_Form):
             'l': 'map'
         }
         response = requests.get(map_api_server, params=map_params)
+        print(response)
 
         if not response:
             print('Код ошибки:', response.status_code)
@@ -35,12 +37,11 @@ class MyWidget(QMainWindow, Ui_Form):
         with open(self.map_file, 'wb') as file:
             file.write(response.content)
 
-        self.setGeometry(100, 100, WIDTH, HEIGHT)
-        self.setWindowTitle('Карта')
-        self.pixmap = QPixmap(self.map_file)
-        self.image = QLabel(self)
-        self.image.move(0, 0)
-        self.image.setPixmap(self.pixmap)
+        self.initUI()
+
+    def initUI(self):
+        pixmap = QPixmap(self.map_file)
+        self.label.setPixmap(pixmap)
 
     def closeEvent(self, event):
         os.remove(self.map_file)
